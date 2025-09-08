@@ -1,0 +1,33 @@
+name: Docker Image CI - X86_64 for Chimera Linux
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build this sftp Docker image
+      run: |
+        git clone https://github.com/atmoz/sftp.git
+        cd sftp
+        docker build --tag atmoz-sftp-nn .
+
+    - name: save sftp docker image 
+      run: |
+        dicker save atmoz-sftp-nn -o atmoz-sftp-nn.tar
+        tar -vcJf atmoz-sftp-nn.tar.xz atmoz-sftp-nn.tar
+        
+
+    - name: Upload static program
+      uses: actions/upload-artifact@v4
+      with:
+        name: atmoz-sftp-nn
+        path: ./atmoz-sftp-nn.tar.xz
