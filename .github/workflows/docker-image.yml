@@ -24,7 +24,7 @@ jobs:
     - name: save sftp docker image 
       run: |
         docker save atmoz-sftp-nn -o atmoz-sftp-nn.tar
-        XZ_OPT=-e9 tar -vcJf atmoz-sftp-nn.tar.xz atmoz-sftp-nn.tar
+        xz -e9 atmoz-sftp-nn.tar
         
 
     - name: Upload static program
