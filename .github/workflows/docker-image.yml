@@ -18,12 +18,13 @@ jobs:
       run: |
         git clone https://github.com/atmoz/sftp.git
         cd sftp
+        mv Dockerfile-alpine Dockerfile
         docker build --tag atmoz-sftp-nn .
 
     - name: save sftp docker image 
       run: |
         docker save atmoz-sftp-nn -o atmoz-sftp-nn.tar
-        tar -vcJf atmoz-sftp-nn.tar.xz atmoz-sftp-nn.tar
+        XZ_OPT=-e9 tar -vcJf atmoz-sftp-nn.tar.xz atmoz-sftp-nn.tar
         
 
     - name: Upload static program
