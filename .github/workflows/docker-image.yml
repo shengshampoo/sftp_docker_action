@@ -10,7 +10,10 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
@@ -18,8 +21,7 @@ jobs:
       run: |
         git clone https://github.com/atmoz/sftp.git
         cd sftp
-        mv Dockerfile-alpine Dockerfile
-        docker build --tag atmoz-sftp-nn .
+        docker build -f Dockerfile-alpine --tag atmoz-sftp-nn .
 
     - name: save sftp docker image 
       run: |
@@ -30,5 +32,5 @@ jobs:
     - name: Upload static program
       uses: actions/upload-artifact@v4
       with:
-        name: atmoz-sftp-nn
+        name: atmoz-sftp-nn-${{ matrix.os }}
         path: ./atmoz-sftp-nn.tar.xz
