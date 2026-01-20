@@ -1,0 +1,51 @@
+name: Build and Push Image to GHCR
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # run it manually
+  workflow_dispatch:    
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: git clone ztnet original docker image 
+        run: |
+          git clone https://github.com/atmoz/sftp.git
+          cd sftp
+          sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
+          sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
+                 
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./sftp
+          file: ./sftp/Dockerfile-alpine
+          push: true
+          tags: | 
+            ghcr.io/shengshampoo/atmoz-sftp-nn:latest
+          platforms: linux/amd64,linux/arm64
