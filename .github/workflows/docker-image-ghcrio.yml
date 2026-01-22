@@ -11,6 +11,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
 jobs:
   build-and-push-image:
@@ -27,8 +28,9 @@ jobs:
         run: |
           git clone https://github.com/atmoz/sftp.git
           cd sftp
-          sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
-          sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
+          cp ../Dockerfile-alpaquita .
+          # sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
+          # sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
                  
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -44,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./sftp
-          file: ./sftp/Dockerfile-alpine
+          file: ./sftp/Dockerfile-alpaquita
           push: true
           tags: | 
             ghcr.io/shengshampoo/atmoz-sftp-nn:latest
