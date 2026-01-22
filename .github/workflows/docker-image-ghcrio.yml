@@ -28,7 +28,6 @@ jobs:
         run: |
           git clone https://github.com/atmoz/sftp.git
           cd sftp
-          cp ../Dockerfile-alpaquita .
           # sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
           # sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
                  
@@ -46,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./sftp
-          file: ./sftp/Dockerfile-alpaquita
+          file: ./sftp/Dockerfile-alpine
           push: true
           tags: | 
             ghcr.io/shengshampoo/atmoz-sftp-nn:latest
