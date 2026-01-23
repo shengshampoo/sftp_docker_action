@@ -1,0 +1,50 @@
+name: Docker Sftp Image CI - X86_64/AARCH64 for alpaquita Linux to continuous tags
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # run it manually
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build this sftp Docker image
+      run: |
+        git clone https://github.com/atmoz/sftp.git
+        cd sftp
+        sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
+        sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
+        docker build -f ./Dockerfile-alpine --tag atmoz-sftp-nn .
+
+    - name: save sftp docker image 
+      run: |
+        docker save atmoz-sftp-nn -o atmoz-sftp-nn.tar
+        xz -e9 atmoz-sftp-nn.tar
+        
+
+    - name: Upload static program
+      uses: actions/upload-artifact@v4
+      with:
+        name: atmoz-sftp-nn-${{ matrix.os }}
+        path: ./atmoz-sftp-nn.tar.xz
+
+
+    - name: Upload image package to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./atmoz-sftp-nn.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        file_glob: true        
+        body: "Build sftp docker image tar package with using alpaquita linux docker image."           
