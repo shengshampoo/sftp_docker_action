@@ -46,7 +46,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         file: ./atmoz-sftp-nn.tar.xz
+        asset_name: atmoz-sftp-nn-${{ runner.os }}-${{ runner.arch }}.tar.xz        
         tag: refs/tags/continuous
-        overwrite: true
-        file_glob: true        
+        overwrite: true      
         body: "Build sftp docker image tar package with using alpaquita linux docker image."           
