@@ -23,8 +23,8 @@ jobs:
       run: |
         git clone https://github.com/atmoz/sftp.git
         cd sftp
-        # sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
-        # sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
+        sed -i "1s@alpine:latest@bellsoft/alpaquita-linux-base:stream-musl@" ./Dockerfile-alpine
+        sed -i "s@bash@bash mimalloc-global@" ./Dockerfile-alpine
         docker build -f ./Dockerfile-alpine --tag atmoz-sftp-nn .
 
     - name: save sftp docker image 
